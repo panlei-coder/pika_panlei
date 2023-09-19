@@ -74,7 +74,7 @@ class LibeventReactor : public Reactor {
   static void TimerCallback(evutil_socket_t, int16_t, void*);
 
   std::unique_ptr<event_base, decltype(event_base_free)*> event_base_; // 事件反应器对象
-  std::unordered_map<int, std::unique_ptr<Object>> objects_; // 事件对象映射表，按文件描述符索引
+  std::unordered_map<int, std::unique_ptr<Object>> objects_; // 事件对象映射表，按文件描述符索引(struct Object)
 
   // use shared ptr because callback will hold timer
   std::unordered_map<TimerId, std::shared_ptr<Timer>> timers_; // 定时器映射表，按定时器ID索引

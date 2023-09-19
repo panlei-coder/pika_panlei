@@ -44,6 +44,10 @@ void TcpObject::OnAccept(int fd, const std::string& peer_ip, int peer_port) {
   // 获取关联的 EventLoop 对象的底层事件库指针
   auto base = reinterpret_cast<struct event_base*>(loop_->GetReactor()->Backend());
   // 创建一个基于socket的bufferevent对象
+  /*
+  bufferevent_socket_new() 函数会创建一个 bufferevent 对象，
+  并将其添加到指定的 event_base 对象中，以便在事件循环中进行处理。
+  */
   bev_ = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
   assert(bev_);
 
@@ -134,6 +138,17 @@ void TcpObject::HandleConnect() {
   INFO("HandleConnect success with {}:{}", peer_ip_, peer_port_);
 
   state_ = State::kConnected;
+  /*
+  bufferevent_setcb接收5个参数：
+  （1）bev_：要设置回调函数的 bufferevent 对象
+  （2）readcb：用于接收数据的回调函数指针
+  （3）writecb：用于发送数据完成的回调函数指针
+  （4）eventcb：用于处理错误和事件的回调函数指针
+  （5）this：用于指定回调函数中作为成员函数的 this 指针，
+      通过将 this 传递给 bufferevent_setcb()，
+      可以确保在回调函数中可以访问到当前对象的成员函数和成员变量，
+      作为回调函数的最后一个参数
+  */ 
   bufferevent_setcb(bev_, &TcpObject::OnRecvData, nullptr, &TcpObject::OnEvent, this);
   bufferevent_enable(bev_, EV_READ);
 

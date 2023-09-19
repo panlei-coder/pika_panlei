@@ -99,7 +99,7 @@ class EventLoop {
 
  private:
   std::unique_ptr<Reactor> reactor_; // 后端反应器
-  std::unordered_map<int, std::shared_ptr<EventObject>> objects_; // 事件对象的映射表
+  std::unordered_map<int, std::shared_ptr<EventObject>> objects_; // 事件对象的映射表(TcpListenerObj/PipeObject)
   std::shared_ptr<internal::PipeObject> notifier_; // 通知器对象
 
   std::mutex task_mutex_; // 任务互斥锁

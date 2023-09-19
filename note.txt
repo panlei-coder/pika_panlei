@@ -1,0 +1,9 @@
+（1）目前net层只有一个mainReactor，当PikiwiDB启动时，先创建一个TCPListenerObj和一个PipeObject
+（监听事件通知器，EventLoop::Run()中的Register(notifier_, kEventRead)）加入到g_pikiwidb.event_loop_.objects_，
+后续每进行一次redis-cli -h 127.0.0.1 -p 9221连接，都会生成一个TCPObject加入到这个objects_对象中。
+
+（2）g_pikiwidb.event_loop_.reactor_.event_base_(libevent_reactor.h)中会保存TCPListenerObj对应的
+evconnlistener（就是整个服务端的端口监听），另一个是每当有redis-cli -h 127.0.0.1 -p 9221连接建立时，
+会将TCPObject对应的bufferevent_（TcpObject.bev_，TcpObject::OnAccept()中的bev_ = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE)，
+以及TcpObject::HandleConnect()中的bufferevent_setcb(bev_, &TcpObject::OnRecvData, nullptr, &TcpObject::OnEvent, this)和
+bufferevent_enable(bev_, EV_READ);）添加到event_base_中，来处理读写事件。

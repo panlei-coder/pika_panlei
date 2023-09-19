@@ -38,7 +38,7 @@ class PikiwiDB final {
   std::unique_ptr<pikiwidb::CmdTableManager>& CmdTableManager();
 
  public:
-  pikiwidb::EventLoop event_loop_; 
+  pikiwidb::EventLoop event_loop_; // mainReactor
 
   pikiwidb::PString cfgFile_; // config file
   unsigned short port_; // 
